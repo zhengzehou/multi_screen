@@ -1,4 +1,4 @@
-package com.ule.multi_screen.screen;
+package top.betteryou.multi_screen.screen;
 
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -37,7 +37,7 @@ public class ScreenManager {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                         displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
                         disNum = displayManager.getDisplays(null);
-                        Toast.makeText(context, "您的Android版本支持双屏功能", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "您的Android版本支持双屏功能", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "您的Android版本不支持双屏功能", Toast.LENGTH_SHORT).show();
                     }

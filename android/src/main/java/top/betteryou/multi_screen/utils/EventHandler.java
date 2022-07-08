@@ -1,4 +1,4 @@
-package com.ule.multi_screen.utils;
+package top.betteryou.multi_screen.utils;
 
 import io.flutter.plugin.common.EventChannel;
 

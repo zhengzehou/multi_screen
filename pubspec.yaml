@@ -37,19 +37,19 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.ule.multi_screen
-        pluginClass: MultiPresentationPlugin
-#      ios:
-#        pluginClass: MultiScreenPlugin
-#      linux:
-#        pluginClass: MultiScreenPlugin
-#      macos:
-#        pluginClass: MultiScreenPlugin
-#      windows:
-#        pluginClass: MultiScreenPluginCApi
-#      web:
-#        pluginClass: MultiScreenWeb
-#        fileName: multi_screen_web.dart
+        package: top.betteryou.multi_screen
+        pluginClass: MultiScreenPlugin
+      ios:
+        pluginClass: MultiScreenPlugin
+      linux:
+        pluginClass: MultiScreenPlugin
+      macos:
+        pluginClass: MultiScreenPlugin
+      windows:
+        pluginClass: MultiScreenPluginCApi
+      web:
+        pluginClass: MultiScreenWeb
+        fileName: multi_screen_web.dart
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

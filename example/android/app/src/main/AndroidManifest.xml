@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ule.multi_screen_example">
+    package="top.betteryou.multi_screen_example">
    <application
         android:label="multi_screen_example"
         android:name="${applicationName}"

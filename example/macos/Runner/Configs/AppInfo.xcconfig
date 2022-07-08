@@ -8,7 +8,7 @@
 PRODUCT_NAME = multi_screen_example
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.ule.multiScreenExample
+PRODUCT_BUNDLE_IDENTIFIER = top.betteryou.multiScreenExample
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2022 com.ule. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2022 top.betteryou. All rights reserved.

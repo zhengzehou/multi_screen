@@ -1,4 +1,4 @@
-package com.ule.multi_screen;
+package top.betteryou.multi_screen;
 
 
 import android.annotation.TargetApi;
@@ -7,13 +7,12 @@ import android.os.Build;
 import android.view.Display;
 import android.view.View;
 
-import com.ule.multi_screen.screen.DifferentDisplay;
-import com.ule.multi_screen.screen.ScreenManager;
-import com.ule.multi_screen.utils.EventHandler;
+import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -22,26 +21,24 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import top.betteryou.multi_screen.screen.DifferentDisplay;
+import top.betteryou.multi_screen.screen.ScreenManager;
+import top.betteryou.multi_screen.utils.EventHandler;
 
 /**
- * PresentationPlugin
+ * MultiScreenPlugin
  */
-public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
-    /// The MethodChannel that will the communication between Flutter and native Android
-    ///
-    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-    /// when the Flutter Engine is detached from the Activity
+public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
     private MethodChannel channel;
     private Context mContext;
     private ScreenManager screenManager;
-    private static String EventChannel = "presentationEventChannel";
-    private io.flutter.plugin.common.EventChannel eventChannel;
+    private final static String EventChannel = "presentationEventChannel";
     private EventHandler mEventHandler;
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "presentation");
-        eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), EventChannel);
+        io.flutter.plugin.common.EventChannel eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), EventChannel);
         mEventHandler = EventHandler.getInstance();
         eventChannel.setStreamHandler(mEventHandler);
         channel.setMethodCallHandler(this);
@@ -49,7 +46,7 @@ public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(MethodCall call, @NonNull Result result) {
         switch (call.method) {
             case "getPlatformInfo":
                 Map<String,String> deviceInfo = new HashMap<>();
@@ -66,7 +63,7 @@ public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler
                 deviceInfo.put("fingerprint",Build.FINGERPRINT);
                 deviceInfo.put("model",Build.MODEL);
                 deviceInfo.put("product",Build.PRODUCT);
-                deviceInfo.put("cpu_abi2",Build.USER);
+                deviceInfo.put("user",Build.USER);
                 deviceInfo.put("serial",Build.SERIAL);
                 deviceInfo.put("id",Build.ID);
                 result.success(deviceInfo);
@@ -82,7 +79,7 @@ public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler
                     Map<String, Object> dis = new HashMap<>();
                     dis.put("disName", displays[i].getName());
                     dis.put("disId", displays[i].getDisplayId());
-                    dis.put("disRataion", displays[i].getRotation());
+                    dis.put("disRotation", displays[i].getRotation());
                     dis.put("disState", displays[i].getState());
                     dis.put("disMode", displays[i].getMode().toString());
                     res.put("dis" + i, dis);
@@ -90,22 +87,26 @@ public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler
                 result.success(res);
                 break;
             case "setContentView":
-                int index = call.argument("index");
-                final String rout = call.argument("rout");
                 try {
-                    screenManager.setContentView(new DifferentDisplay(mContext, screenManager.getDisNum()[index]) {
-                        protected View getLayoutView() {
-                            return null;
-                        }
+                    int index = call.argument("index");
+                    final String rout = call.argument("rout");
+                    try {
+                        screenManager.setContentView(new DifferentDisplay(mContext, screenManager.getDisNum()[index]) {
+                            protected View getLayoutView() {
+                                return null;
+                            }
 
-                        protected String viewRout() {
-                            return rout;
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                            protected String viewRout() {
+                                return rout;
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    result.success(screenManager.isShowing());
+                }catch (Exception e){
+                    Log.e(call.method, e.toString());
                 }
-                result.success(screenManager.isShowing());
                 break;
             case "close":
                 screenManager.close();
@@ -113,11 +114,12 @@ public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler
             case "subscribeMsg":
                 mEventHandler.response(call.arguments);
                 break;
+
         }
     }
 
     @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
     }
 
@@ -132,7 +134,7 @@ public class MultiPresentationPlugin implements FlutterPlugin, MethodCallHandler
     }
 
     @Override
-    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding activityPluginBinding) {
 
     }
 

@@ -12,8 +12,6 @@ public class MultiScreenPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case "getPlatformVersion":
       result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
-  case "getPlatformInfo":
-        result("macOS " + ProcessInfo.processInfo)
     default:
       result(FlutterMethodNotImplemented)
     }

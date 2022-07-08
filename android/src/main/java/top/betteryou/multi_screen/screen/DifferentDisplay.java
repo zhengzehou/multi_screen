@@ -1,4 +1,4 @@
-package com.ule.multi_screen.screen;
+package top.betteryou.multi_screen.screen;
 
 import android.annotation.TargetApi;
 import android.app.Presentation;
@@ -8,12 +8,11 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 
-import com.ule.multi_screen.R;
-
 import io.flutter.FlutterInjector;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
+import top.betteryou.multi_screen.R;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 public abstract class DifferentDisplay extends Presentation {

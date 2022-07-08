@@ -1,4 +1,4 @@
-package com.ule.multi_screen_example;
+package top.betteryou.multi_screen_example;
 
 import io.flutter.embedding.android.FlutterActivity;
 
