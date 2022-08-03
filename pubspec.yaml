@@ -41,15 +41,15 @@ flutter:
         pluginClass: MultiScreenPlugin
       ios:
         pluginClass: MultiScreenPlugin
-      linux:
-        pluginClass: MultiScreenPlugin
-      macos:
-        pluginClass: MultiScreenPlugin
-      windows:
-        pluginClass: MultiScreenPluginCApi
-      web:
-        pluginClass: MultiScreenWeb
-        fileName: multi_screen_web.dart
+#      linux:
+#        pluginClass: MultiScreenPlugin
+#      macos:
+#        pluginClass: MultiScreenPlugin
+#      windows:
+#        pluginClass: MultiScreenPluginCApi
+#      web:
+#        pluginClass: MultiScreenWeb
+#        fileName: multi_screen_web.dart
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

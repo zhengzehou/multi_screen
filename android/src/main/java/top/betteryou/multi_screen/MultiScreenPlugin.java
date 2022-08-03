@@ -3,13 +3,22 @@ package top.betteryou.multi_screen;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiNetworkSuggestion;
 import android.os.Build;
 import android.view.Display;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.Log;
@@ -23,6 +32,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import top.betteryou.multi_screen.screen.DifferentDisplay;
 import top.betteryou.multi_screen.screen.ScreenManager;
+import top.betteryou.multi_screen.usb.UsbActivity;
 import top.betteryou.multi_screen.utils.EventHandler;
 
 /**
@@ -32,13 +42,14 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
     private MethodChannel channel;
     private Context mContext;
     private ScreenManager screenManager;
-    private final static String EventChannel = "presentationEventChannel";
+    private UsbActivity usbActivity;
+    private final static String eventChannelKey = "presentationEventChannel";
     private EventHandler mEventHandler;
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
-        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "presentation");
-        io.flutter.plugin.common.EventChannel eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), EventChannel);
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "multi_screen");
+        io.flutter.plugin.common.EventChannel eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), eventChannelKey);
         mEventHandler = EventHandler.getInstance();
         eventChannel.setStreamHandler(mEventHandler);
         channel.setMethodCallHandler(this);
@@ -70,6 +81,7 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                 break;
             case "init":
                 screenManager = ScreenManager.init(mContext);
+                usbActivity = new UsbActivity(mContext);
                 result.success(0);
                 break;
             case "getDisNum":
@@ -85,6 +97,12 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                     res.put("dis" + i, dis);
                 }
                 result.success(res);
+                Map<String, Object> test = new HashMap<>();
+                test.put("method","page1");
+                Map<String, String> test2 = new HashMap<>();
+                test2.put("first","firstData");
+                test.put("value",test2);
+                mEventHandler.response(test);
                 break;
             case "setContentView":
                 try {
@@ -108,8 +126,15 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                     Log.e(call.method, e.toString());
                 }
                 break;
+            case "getMACAddress":
+                result.success(getMACAddress());
+                break;
+            case "getIpAddress":
+                result.success(getIpAddress());
+                break;
             case "close":
                 screenManager.close();
+                usbActivity.closeAll();
                 break;
             case "subscribeMsg":
                 mEventHandler.response(call.arguments);
@@ -142,4 +167,50 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
     public void onDetachedFromActivity() {
 
     }
+
+    public String getMACAddress() {
+        String macAddress = "000000000000";
+        WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        List<WifiNetworkSuggestion> macAddresses = null;
+            macAddresses = wifiManager.getNetworkSuggestions();
+            if (macAddresses != null && macAddresses.size() > 0) {
+                macAddress = macAddresses.get(0).getBssid().toString();
+            }
+        }
+        return macAddress;
+    }
+
+    public String getIpAddress() {
+        String hostIp = null;
+        try {
+            Enumeration nis = NetworkInterface.getNetworkInterfaces();
+            InetAddress ia = null;
+            while (nis.hasMoreElements()) {
+                if(hostIp != null)
+                    break;
+                NetworkInterface ni = (NetworkInterface) nis.nextElement();
+//                Log.e("tiwolf", "getIpAddress: 开机获取ip="+ni.getName() );
+//                if (ni.getName().equals(ipType)) {
+                    Enumeration<InetAddress> ias = ni.getInetAddresses();
+                    while (ias.hasMoreElements()) {
+                        ia = ias.nextElement();
+                        if (ia instanceof Inet6Address) {
+                            continue;// skip ipv6
+                        }
+                        String ip = ia.getHostAddress();
+                        // 过滤掉127段的ip地址
+                        if (!"127.0.0.1".equals(ip)) {
+                            hostIp = ia.getHostAddress();
+                            break;
+                        }
+                    }
+//                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return hostIp;
+    }
+
 }

@@ -51,12 +51,21 @@ class _MainPageState extends State<MainPage> {
   String screeInfo = "";
   bool? res = false;
   StreamController<dynamic> streamController = new StreamController<dynamic>();
+  var _nativeMsg;
 
   @override
   void initState() {
     // TODO: implement initState
     presentation = MultiPresentation.instance();
     presentation?.registerListener("page1", streamController);
+    streamController.stream.listen((event) {
+      print(event.toString());
+      // 监听Native发送的消息
+      _nativeMsg = event;
+      setState((){
+
+      });
+    });
     super.initState();
   }
 
@@ -79,6 +88,13 @@ class _MainPageState extends State<MainPage> {
                       });
                     },
                     child: Text("屏幕信息"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // presentation!.sendMsgFromNative();
+                      presentation?.subscribeMsg("page1", {"value": "test"});
+                    },
+                    child: Text("Native"),
                   ),
                   TextButton(
                       style: ButtonStyle(
@@ -105,7 +121,9 @@ class _MainPageState extends State<MainPage> {
                       child: Text("发送消息"))
                 ],
               ),
-              Text(screeInfo)
+              Text(screeInfo),
+              SizedBox(height: 20,),
+              Text("${_nativeMsg} "),
             ],
           )),
     );

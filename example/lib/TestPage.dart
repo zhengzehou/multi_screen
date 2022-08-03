@@ -59,6 +59,7 @@ class _TestMsgState extends State<TestMsg> {
   MultiPresentation? presentation;
   var screeInfo;
   StreamController<dynamic> streamController = new StreamController<dynamic>();
+  StreamSubscription? streamSubscription;
 
   @override
   void initState() {
@@ -67,13 +68,21 @@ class _TestMsgState extends State<TestMsg> {
     presentation?.init();
 
     presentation?.registerListener("page2", streamController);
-    streamController.stream.listen((event) {
+    streamSubscription = streamController.stream.listen((event) {
       setState(() {
         print(json.encode(event['value']));
         screeInfo=event['value'];
       });
     });
     super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    // 取消订阅，避免内存泄漏
+    streamSubscription?.cancel();
+    presentation?.unregisterListener("page2");
   }
   @override
   Widget build(BuildContext context) {
