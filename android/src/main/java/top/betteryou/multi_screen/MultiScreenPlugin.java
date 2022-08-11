@@ -2,7 +2,14 @@ package top.betteryou.multi_screen;
 
 
 import android.annotation.TargetApi;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.hardware.usb.UsbConstants;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSuggestion;
 import android.os.Build;
@@ -11,6 +18,10 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+
+import com.sunmi.externalprinterlibrary.api.ConnectCallback;
+import com.sunmi.externalprinterlibrary.api.SunmiPrinter;
+import com.sunmi.externalprinterlibrary.api.SunmiPrinterApi;
 
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -50,8 +61,8 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
     public void onAttachedToEngine(FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "multi_screen");
         io.flutter.plugin.common.EventChannel eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), eventChannelKey);
-        mEventHandler = EventHandler.getInstance();
-        eventChannel.setStreamHandler(mEventHandler);
+//        mEventHandler = EventHandler.getInstance();
+//        eventChannel.setStreamHandler(mEventHandler);
         channel.setMethodCallHandler(this);
     }
 
@@ -65,8 +76,8 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                 deviceInfo.put("host",Build.HOST);
                 deviceInfo.put("manufacturer",Build.MANUFACTURER);
                 deviceInfo.put("hardware",Build.HARDWARE);
-                deviceInfo.put("cpu_abi",Build.CPU_ABI);
-                deviceInfo.put("cpu_abi2",Build.CPU_ABI2);
+//                deviceInfo.put("cpu_abi",Build.CPU_ABI);
+//                deviceInfo.put("cpu_abi2",Build.CPU_ABI2);
                 deviceInfo.put("board",Build.BOARD);
                 deviceInfo.put("brand",Build.BRAND);
                 deviceInfo.put("device",Build.DEVICE);
@@ -75,7 +86,7 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                 deviceInfo.put("model",Build.MODEL);
                 deviceInfo.put("product",Build.PRODUCT);
                 deviceInfo.put("user",Build.USER);
-                deviceInfo.put("serial",Build.SERIAL);
+//                deviceInfo.put("serial",Build.SERIAL);
                 deviceInfo.put("id",Build.ID);
                 result.success(deviceInfo);
                 break;
@@ -126,6 +137,18 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                     Log.e(call.method, e.toString());
                 }
                 break;
+            case "deviceList":
+                UsbManager usbManager = (UsbManager) this.mContext.getSystemService(Context.USB_SERVICE); //获取USB设备管理
+                HashMap<String,UsbDevice> deviceHashMap = usbManager.getDeviceList();
+                result.success(deviceHashMap);
+                break;
+            case "sunmiPrinter":
+                String content = call.argument("content");
+                String deviceId = call.argument("deviceId");
+                String rst = usbActivity.sendMsg(content,deviceId);
+                result.success(rst);
+//                result.success(sunmiPrinter(content));
+                break;
             case "getMACAddress":
                 result.success(getMACAddress());
                 break;
@@ -172,7 +195,7 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
         String macAddress = "000000000000";
         WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-        List<WifiNetworkSuggestion> macAddresses = null;
+        List<WifiNetworkSuggestion> macAddresses;
             macAddresses = wifiManager.getNetworkSuggestions();
             if (macAddresses != null && macAddresses.size() > 0) {
                 macAddress = macAddresses.get(0).getBssid().toString();
@@ -211,6 +234,63 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
             e.printStackTrace();
         }
         return hostIp;
+    }
+
+//    public String serialTest(){
+//        UsbManager manager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
+//// 获取设备
+//        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+//        UsbDevice device = null ;
+//        if(deviceList.isEmpty()){
+//            return "";
+//        }
+//        for(String k : deviceList.keySet()){
+//            device = deviceList.get(k);
+//        }
+//        int count = device.getInterfaceCount();
+//        for (int i = 0;i < count; i++) {
+//            UsbInterface intf = device.getInterface(i);
+//            // 之后我们会根据 intf的 getInterfaceClass 判断是哪种类型的Usb设备，
+//            // 并且结合 device.getVectorID() 或者厂家ID进行过滤，比如 UsbConstants.USB_CLASS_PRINTER
+//            if (intf.getInterfaceClass() == UsbConstants.USB_CLASS_PRINTER) {
+//                // 这个device就是你要找的UsbDevice，此时还需要进行权限判断
+//                if (usbManager.hasPermission(device) == false) { // 没有权限
+//                    PendingIntent permissionIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("com.android.example.USB_PERMISSION"), 0);
+//                    IntentFilter filter = new IntentFilter("com.android.example.USB_PERMISSION");
+//                    registerReceiver(mUsbReceiver, filter);
+//                    return;
+//                }
+//            }
+//        }
+//    }
+
+    public String sunmiPrinter(String text) {
+        try {
+            SunmiPrinterApi.getInstance().setPrinter(SunmiPrinter.SunmiNTPrinter);
+            if(!SunmiPrinterApi.getInstance().isConnected()){
+                SunmiPrinterApi.getInstance().connectPrinter(mContext, new ConnectCallback() {
+                    public void onFound() {
+                        //发现打印机会回调此⽅方法
+                    }
+                    public void onUnfound() {
+                        //如果没找到打印机会回调此⽅方法
+                    }
+                    public void onConnect() {
+                        //连接成功后会回调此⽅方法，则可以打印
+                    }
+                    public void onDisconnect() {
+                        //连接中打印机断开会回调此⽅方法，此时将中断打印
+                    }
+                });
+            }
+            SunmiPrinterApi.getInstance().printerInit();
+            SunmiPrinterApi.getInstance().printText(text+"\n");
+            SunmiPrinterApi.getInstance().printQrCode(text, 4, 0);
+            SunmiPrinterApi.getInstance().disconnectPrinter(mContext);
+            return "success";
+        }catch (Exception e){
+            return e.getMessage();
+        }
     }
 
 }

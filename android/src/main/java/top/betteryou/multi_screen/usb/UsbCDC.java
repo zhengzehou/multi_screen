@@ -25,11 +25,11 @@ public class UsbCDC
 
     private Message mes; //信息包
 
-    private MyHandler myHandler;//信息处理中心对象
-    UsbCDC(MyHandler myHandler)
-    {
-        this.myHandler = myHandler;
-    }
+//    private MyHandler myHandler;//信息处理中心对象
+//    UsbCDC(MyHandler myHandler)
+//    {
+//        this.myHandler = myHandler;
+//    }
 
     /**
      * 向USB设备发送数据
@@ -42,7 +42,7 @@ public class UsbCDC
         {
             //如果USB链路为空，执行该作用域代码
             connect = false;
-            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
             return false;
         }
         byte[] messageBytes = message.getBytes(); //字符串转为数组
@@ -52,15 +52,15 @@ public class UsbCDC
             //向信息处理中心发送“发送成功”的信息，并将信息内容传递过去
             mes = new Message();
             mes.obj = new String(messageBytes);
-            mes.what = MyHandler.OUTPUT;
-            myHandler.sendMessage(mes);
+//            mes.what = MyHandler.OUTPUT;
+//            myHandler.sendMessage(mes);
             return true;
         }
         else
         {
             //发送失败
             connect = false;
-            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
             return false;
         }
     }
@@ -75,7 +75,7 @@ public class UsbCDC
         if (usbDeviceConnection == null) //判断USB连接链路是否为空，不为空才能进行数据接收
         {
             connect = false;
-            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
             return null;
         }
         int i = usbDeviceConnection.bulkTransfer(bulkInUsbEndpoint,tempByte,tempByte.length,100);//读取数据，100为超时时间，接收的数据为数组类型
@@ -133,15 +133,16 @@ public class UsbCDC
     public void openCDC(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection)
     {
         this.usbDeviceConnection = usbDeviceConnection;
-        usbInterface = usbDevice.getInterface(findCDC(usbDevice)); //获取USB设备接口
+//        usbInterface = usbDevice.getInterface(findCDC(usbDevice)); //获取USB设备接口
+        usbInterface = usbDevice.getInterface(0); //获取USB设备接口
         if (usbDeviceConnection == null) //判断USB设备链路是否为空
         {
-            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
             return;
         }
         if (!usbDeviceConnection.claimInterface(usbInterface,true)) //USB设备链路绑定获取到的接口
         {
-            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
             return;
         }
         int numberEndpoints = usbInterface.getEndpointCount(); //获取USB设备接口的数据传输通道数量
@@ -181,24 +182,25 @@ public class UsbCDC
                     break;
             }
         }
-        if (bulkOutUsbEndpoint != null && bulkInUsbEndpoint != null) //如果USB块传输模式输入输通道都不为空出
-        {
-            //USB连接成功
-            connect = true;
-            //获取到USB设备的ID、VID、PID
-            String usbData = "Name:"+usbDevice.getDeviceName()+"\nID:"+usbDevice.getDeviceId()+"    VID:"+usbDevice.getVendorId()+"    PID:"+usbDevice.getProductId();
-            mes = new Message();
-            mes.obj = usbData;
-            mes.what = MyHandler.USB_CONNECT_SUCCESS;
-            myHandler.sendMessage(mes);
-            threadReadData.start(); //开启接收数据线程
-        }
-        else
-        {
-            //USB连接失败
-            connect = false;
-            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
-        }
+
+//        if (bulkOutUsbEndpoint != null && bulkInUsbEndpoint != null) //如果USB块传输模式输入输通道都不为空出
+//        {
+//            //USB连接成功
+//            connect = true;
+//            //获取到USB设备的ID、VID、PID
+//            String usbData = "Name:"+usbDevice.getDeviceName()+"\nID:"+usbDevice.getDeviceId()+"    VID:"+usbDevice.getVendorId()+"    PID:"+usbDevice.getProductId();
+//            mes = new Message();
+//            mes.obj = usbData;
+////            mes.what = MyHandler.USB_CONNECT_SUCCESS;
+////            myHandler.sendMessage(mes);
+//            threadReadData.start(); //开启接收数据线程
+//        }
+//        else
+//        {
+//            //USB连接失败
+//            connect = false;
+////            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+//        }
     }
 
     /**
@@ -226,8 +228,8 @@ public class UsbCDC
                     {
                         mes = new Message();
                         mes.obj = message;
-                        mes.what = MyHandler.INPUT;
-                        myHandler.sendMessage(mes);
+//                        mes.what = MyHandler.INPUT;
+//                        myHandler.sendMessage(mes);
                         message = "";
                     }
                 }

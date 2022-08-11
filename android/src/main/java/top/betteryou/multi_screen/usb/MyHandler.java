@@ -4,6 +4,7 @@ package top.betteryou.multi_screen.usb;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,12 +25,22 @@ public class MyHandler extends Handler {
 
     private Context context; //上下文
     private UsbActivity mainActivity;
-    MyHandler( Context context,UsbActivity mainActivity) {
-        this.context = context;
-        this.mainActivity = mainActivity;
+//    public MyHandler(Context context,UsbActivity mainActivity){
+//        this.context = context;
+//        this.mainActivity = mainActivity;
+//    }
+
+    public MyHandler(){
+        super(Looper.myLooper(),new Callback(){
+            @Override
+            public boolean handleMessage(@NonNull Message msg) {
+                handleMessage(msg);
+                return false;
+            }
+        });
     }
 
-    @Override
+//    @Override
     public void handleMessage(@NonNull Message msg) {
         String msgStr = null;
         switch (msg.what) {
@@ -41,8 +52,8 @@ public class MyHandler extends Handler {
             case USB_CONNECT_FAILED: //USB设备连接失败
                 MyHandler.USB_CONNECT_STATE  = false;
                 mainActivity.closeAll(); //连接断开或连接失败，执行关闭所有连接和对象的方法
-                Toast.makeText(context,"断开连接",Toast.LENGTH_LONG).show();
-                msgStr = "断开连接";
+                Toast.makeText(context,"断开连接1",Toast.LENGTH_LONG).show();
+                msgStr = "断开连接2";
                 break;
             case OUTPUT:  //发送消息
                 msgStr = "[TX]"+gteNowDate()+": "+msg.obj.toString()+"\n"; //给控件填充意图发送来的信息
