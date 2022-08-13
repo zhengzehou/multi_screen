@@ -51,7 +51,7 @@ public class MyHandler extends Handler {
                 break;
             case USB_CONNECT_FAILED: //USB设备连接失败
                 MyHandler.USB_CONNECT_STATE  = false;
-                mainActivity.closeAll(); //连接断开或连接失败，执行关闭所有连接和对象的方法
+                mainActivity.closeAll(null); //连接断开或连接失败，执行关闭所有连接和对象的方法
                 Toast.makeText(context,"断开连接1",Toast.LENGTH_LONG).show();
                 msgStr = "断开连接2";
                 break;

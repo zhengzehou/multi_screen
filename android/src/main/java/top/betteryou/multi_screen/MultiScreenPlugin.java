@@ -2,13 +2,8 @@ package top.betteryou.multi_screen;
 
 
 import android.annotation.TargetApi;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSuggestion;
@@ -17,7 +12,6 @@ import android.view.Display;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.sunmi.externalprinterlibrary.api.ConnectCallback;
 import com.sunmi.externalprinterlibrary.api.SunmiPrinter;
@@ -27,8 +21,10 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +40,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import top.betteryou.multi_screen.screen.DifferentDisplay;
 import top.betteryou.multi_screen.screen.ScreenManager;
 import top.betteryou.multi_screen.usb.UsbActivity;
+import top.betteryou.multi_screen.usbprinter.UsbPrinterTest;
 import top.betteryou.multi_screen.utils.EventHandler;
 
 /**
@@ -139,15 +136,29 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                 break;
             case "deviceList":
                 UsbManager usbManager = (UsbManager) this.mContext.getSystemService(Context.USB_SERVICE); //获取USB设备管理
-                HashMap<String,UsbDevice> deviceHashMap = usbManager.getDeviceList();
-                result.success(deviceHashMap);
+                Map<String,UsbDevice> deviceHashMap = usbManager.getDeviceList();
+                List<Map<String,String>> list = new ArrayList<>();
+                Iterator<String> it = deviceHashMap.keySet().iterator();
+                while (it.hasNext()){
+                    UsbDevice usbDevice = deviceHashMap.get(it.next());
+                    Map<String,String> info = new HashMap<>();
+                    info.put("mName",usbDevice.getDeviceName());
+                    info.put("manufacturerName",usbDevice.getManufacturerName());
+                    info.put("productName",usbDevice.getProductName());
+                    info.put("version",usbDevice.getVersion());
+                    info.put("serialNumber",usbDevice.getSerialNumber());
+                    info.put("deviceId",usbDevice.getDeviceId()+"");
+                    info.put("productId",usbDevice.getProductId()+"");
+                    info.put("vendorId",usbDevice.getVendorId()+"");
+                    list.add(info);
+                }
+                result.success(list);
                 break;
-            case "sunmiPrinter":
+            case "serialPortWrite":
                 String content = call.argument("content");
-                String deviceId = call.argument("deviceId");
-                String rst = usbActivity.sendMsg(content,deviceId);
-                result.success(rst);
-//                result.success(sunmiPrinter(content));
+                String deviceName = call.argument("deviceName");
+                String rst = usbActivity.sendMsg(content,deviceName);
+                result.success("ok");
                 break;
             case "getMACAddress":
                 result.success(getMACAddress());
@@ -157,7 +168,7 @@ public class MultiScreenPlugin implements FlutterPlugin, MethodCallHandler, Acti
                 break;
             case "close":
                 screenManager.close();
-                usbActivity.closeAll();
+                usbActivity.closeAll(null);
                 break;
             case "subscribeMsg":
                 mEventHandler.response(call.arguments);

@@ -7,6 +7,8 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.os.Message;
 
+import top.betteryou.multi_screen.printer.PrintUtil;
+
 public class UsbCDC
 {
     private boolean connect; //USB连接状态
@@ -25,11 +27,11 @@ public class UsbCDC
 
     private Message mes; //信息包
 
-//    private MyHandler myHandler;//信息处理中心对象
-//    UsbCDC(MyHandler myHandler)
-//    {
-//        this.myHandler = myHandler;
-//    }
+    private MyHandler myHandler;//信息处理中心对象
+    UsbCDC(MyHandler myHandler)
+    {
+        this.myHandler = myHandler;
+    }
 
     /**
      * 向USB设备发送数据
@@ -45,7 +47,36 @@ public class UsbCDC
 //            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
             return false;
         }
+//        usbDeviceConnection.claimInterface(usbInterface,true);
         byte[] messageBytes = message.getBytes(); //字符串转为数组
+        int result = usbDeviceConnection.bulkTransfer(bulkOutUsbEndpoint,messageBytes,messageBytes.length,100);//发送数据，发送转换为数组后的数据，超时时间为100毫秒
+        if ((result >= 0)) //发送数据返回值大于等于0代表发送成功
+        {
+            //向信息处理中心发送“发送成功”的信息，并将信息内容传递过去
+            mes = new Message();
+            mes.obj = new String(messageBytes);
+//            mes.what = MyHandler.OUTPUT;
+//            myHandler.sendMessage(mes);
+            return true;
+        }
+        else
+        {
+            //发送失败
+            connect = false;
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+            return false;
+        }
+    }
+    public boolean sendBytes(byte []messageBytes)
+    {
+        if (this.usbDeviceConnection == null) //判断USB链路是否获取到，不为空才能进行数据发送
+        {
+            //如果USB链路为空，执行该作用域代码
+            connect = false;
+//            myHandler.sendEmptyMessage(MyHandler.USB_CONNECT_FAILED);
+            return false;
+        }
+//        usbDeviceConnection.claimInterface(usbInterface,true);
         int result = usbDeviceConnection.bulkTransfer(bulkOutUsbEndpoint,messageBytes,messageBytes.length,100);//发送数据，发送转换为数组后的数据，超时时间为100毫秒
         if ((result >= 0)) //发送数据返回值大于等于0代表发送成功
         {
