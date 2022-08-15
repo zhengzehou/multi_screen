@@ -93,78 +93,78 @@ public class UsbActivity {
         return "success";
     }
 
-    public static void printText(UsbCDC usbCDC, int number) {
-        try {
-            PrintUtil2 pUtil = new PrintUtil2();
-
-            usbCDC.sendBytes(pUtil.printStartNumber(number));
-            usbCDC.sendBytes(pUtil.setConcentration(25));
-            // 店铺名 居中 放大
-            usbCDC.sendBytes(pUtil.setFontSize(1));
-            usbCDC.sendBytes(pUtil.setTextBold(true)); // 是否加粗
-            usbCDC.sendBytes(pUtil.printAlignment(1)); // 对齐方式
-            usbCDC.sendBytes(pUtil.printText("The credentials of cashier"));
-            usbCDC.sendBytes(pUtil.setTextBold(false)); // 关闭加粗
-            usbCDC.sendBytes(pUtil.setFontSize(0)); // 字体大小
-            usbCDC.sendBytes(pUtil.printLine()); // 线
-            usbCDC.sendBytes(pUtil.printAlignment(0));
-            usbCDC.sendBytes(pUtil.printLine());
-
+//    public static void printText(UsbCDC usbCDC, int number) {
+//        try {
+//            PrintUtil2 pUtil = new PrintUtil2();
 //
-            usbCDC.sendBytes(pUtil.printLine());
-//
-            usbCDC.sendBytes(pUtil.printTwoColumn("Time: ", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
-            usbCDC.sendBytes(pUtil.printLine());
-//
-            usbCDC.sendBytes(pUtil.printTwoColumn("order number:", System.currentTimeMillis() + ""));
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printTwoColumn("Payer:", "VitaminChen"));
-            usbCDC.sendBytes(pUtil.printLine());
-
-            // 分隔线
-            usbCDC.sendBytes(pUtil.printDashLine());
-            usbCDC.sendBytes(pUtil.printLine());
-
-            //打印商品列表
-            usbCDC.sendBytes(pUtil.printText("commodity"));
-            usbCDC.sendBytes(pUtil.printTabSpace(2));
-            usbCDC.sendBytes(pUtil.printText("Quantity"));
-            usbCDC.sendBytes(pUtil.printTabSpace(1));
-            usbCDC.sendBytes(pUtil.printText("unit price"));
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printThreeColumn("iphone6", "1", "4999.00"));
-//            usbCDC.sendBytes(pUtil.printThreeColumn("iphone6", "1", "4999.00"));
-
-            usbCDC.sendBytes(pUtil.printDashLine());
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printTwoColumn("order amount:", "9998.00"));
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printTwoColumn("Amount received:", "10000.00"));
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printTwoColumn("Change:", "2.00"));
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printDashLine());
-            usbCDC.sendBytes(pUtil.printLine());
-
-            usbCDC.sendBytes(pUtil.printAlignment(1));
-//            usbCDC.sendBytes(pUtil.printBarcode("123456", 80, 2));
+//            usbCDC.sendBytes(pUtil.printStartNumber(number));
+//            usbCDC.sendBytes(pUtil.setConcentration(25));
+//            // 店铺名 居中 放大
+//            usbCDC.sendBytes(pUtil.setFontSize(1));
+//            usbCDC.sendBytes(pUtil.setTextBold(true)); // 是否加粗
+//            usbCDC.sendBytes(pUtil.printAlignment(1)); // 对齐方式
+//            usbCDC.sendBytes(pUtil.printText("The credentials of cashier"));
+//            usbCDC.sendBytes(pUtil.setTextBold(false)); // 关闭加粗
+//            usbCDC.sendBytes(pUtil.setFontSize(0)); // 字体大小
+//            usbCDC.sendBytes(pUtil.printLine()); // 线
+//            usbCDC.sendBytes(pUtil.printAlignment(0));
 //            usbCDC.sendBytes(pUtil.printLine());
-//            usbCDC.sendBytes(pUtil.printQR("1234456", 200, 200));
-            usbCDC.sendBytes(pUtil.printLine(2));
-            usbCDC.sendBytes("========================".getBytes());
-            usbCDC.sendBytes(pUtil.printEndNumber());
-
-
-        } catch (IOException e) {
-
-        }
-    }
+//
+////
+//            usbCDC.sendBytes(pUtil.printLine());
+////
+//            usbCDC.sendBytes(pUtil.printTwoColumn("Time: ", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
+//            usbCDC.sendBytes(pUtil.printLine());
+////
+//            usbCDC.sendBytes(pUtil.printTwoColumn("order number:", System.currentTimeMillis() + ""));
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printTwoColumn("Payer:", "VitaminChen"));
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            // 分隔线
+//            usbCDC.sendBytes(pUtil.printDashLine());
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            //打印商品列表
+//            usbCDC.sendBytes(pUtil.printText("commodity"));
+//            usbCDC.sendBytes(pUtil.printTabSpace(2));
+//            usbCDC.sendBytes(pUtil.printText("Quantity"));
+//            usbCDC.sendBytes(pUtil.printTabSpace(1));
+//            usbCDC.sendBytes(pUtil.printText("unit price"));
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printThreeColumn("iphone6", "1", "4999.00"));
+////            usbCDC.sendBytes(pUtil.printThreeColumn("iphone6", "1", "4999.00"));
+//
+//            usbCDC.sendBytes(pUtil.printDashLine());
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printTwoColumn("order amount:", "9998.00"));
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printTwoColumn("Amount received:", "10000.00"));
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printTwoColumn("Change:", "2.00"));
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printDashLine());
+//            usbCDC.sendBytes(pUtil.printLine());
+//
+//            usbCDC.sendBytes(pUtil.printAlignment(1));
+////            usbCDC.sendBytes(pUtil.printBarcode("123456", 80, 2));
+////            usbCDC.sendBytes(pUtil.printLine());
+////            usbCDC.sendBytes(pUtil.printQR("1234456", 200, 200));
+//            usbCDC.sendBytes(pUtil.printLine(2));
+//            usbCDC.sendBytes("========================".getBytes());
+//            usbCDC.sendBytes(pUtil.printEndNumber());
+//
+//
+//        } catch (IOException e) {
+//
+//        }
+//    }
 
     protected void onDestroy() {
         closeAll(null);//执行关闭所有连接的方法

@@ -1,6 +1,8 @@
 package top.betteryou.multi_screen.usbprinter;
 
 
+import static top.betteryou.multi_screen.usbprinter.ESCUtil.GS;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -9,6 +11,8 @@ import java.util.List;
 
 import top.betteryou.multi_screen.printer.GPrinterCommand;
 import top.betteryou.multi_screen.usb.UsbCDC;
+import top.betteryou.multi_screen.utils.BitmapUtils;
+import top.betteryou.multi_screen.utils.PrinterUtils;
 
 
 public class UsbPrinterTest {
@@ -26,7 +30,6 @@ public class UsbPrinterTest {
      */
     public void USBPrinter() {
         usbPrinter.init();
-        usbPrinter.printBytes(GPrinterCommand.LINE_SPACING_DEFAULT);
         // 设置加粗
         usbPrinter.bold(true);
         // 文字大小
@@ -43,46 +46,17 @@ public class UsbPrinterTest {
 
         usbPrinter.printBarCode("20225301314");
         usbPrinter.printLine(2);
-//        byte[] end = { 0x1d, 0x4c, 0x1f, 0x00 };
-//        usbPrinter.printBytes(end);
-//        Bitmap qrImage = BitmapUtils.createQRCodeBitmap("qr123456", 200, "2");
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        qrImage.compress(Bitmap.CompressFormat.PNG,100,baos);
-//        ArrayList<byte[]> datas = PrinterUtils.decodeBitmapToDataList(qrImage, 200);
-//        for(byte[] bytes : datas){
-//            usbPrinter.printBytes(bytes);
-//        }
-//            String str = sendPhoto(usbPrinter,qrImage);
-//        usbPrinter.printText(str);
-//        byte[] bytes = BitmapUtils.draw2PxPoint(qrImage);
-//        qrImage = null;
-//        byte[] bytes1 = new byte[4];
-//        bytes1[0] = GS;
-//        bytes1[1] = 0x76;
-//        bytes1[2] = 0x30;
-//        bytes1[3] = 0x00;
-//        bytes1 = BytesUtil.byteMerger(bytes1, bytes);
-//        usbPrinter.printBytes(bytes1);
-//        byte[] bytes =baos.toByteArray();
-//        usbPrinter.printBytes(bytes);
-//        usbPrinter.printBytes(end);
-//        usbPrinter.printTextNewLine("-------------------------------");
-//
-//        usbPrinter.printTextNewLine("-------------------------------");
-//        usbPrinter.printQrCode("20225301314+CF15545655454+ssssss");
-
-
-
-//        usbPrinter.printTextNewLine("-------------------------------");
+//        usbPrinter.bold(false);
+//        usbPrinter.setTextSize(0);
 
         // 设置文字居左对齐
         usbPrinter.setAlign(0);
         usbPrinter.printTextNewLine("流水号:20225301314");
-        usbPrinter.printTextNewLine("单号:CF15545655454");
-        usbPrinter.printTextNewLine("结账时间:2022/5/30");
-        usbPrinter.printTextNewLine("收银员:***");
+//        usbPrinter.printTextNewLine("单号:CF15545655454");
+//        usbPrinter.printTextNewLine("结账时间:2022/5/30");
+//        usbPrinter.printTextNewLine("收银员:***");
 //         换2行
-        usbPrinter.printLine(2);
+        usbPrinter.printLine(1);
         usbPrinter.printTextNewLine("菜品       数量 重量    金额");
         usbPrinter.printTextNewLine("-------------------------------");
 //        for (int i = 0; i < addcpbean.size(); i++) {
@@ -113,6 +87,7 @@ public class UsbPrinterTest {
         // 文字大小
         usbPrinter.setTextSize(2);
         usbPrinter.printTextNewLine("备注：不要放辣椒，早点配送");
+        usbPrinter.bold(false);
         // 换2行
         usbPrinter.printLine(2);
         // 文字大小
@@ -120,21 +95,17 @@ public class UsbPrinterTest {
         //居中
         usbPrinter.setAlign(1);
         usbPrinter.printTextNewLine("欢迎下次光临");
-        usbPrinter.printLine(6);
+        usbPrinter.printLine(2);
 
 //        Bitmap image = BitmapUtils.createQRCodeBitmap("qr123456", 200, "2");
-////        usbPrinter.printText(sendPhoto(image));
-////        usbPrinter.printLine(2);
-//        usbPrinter.printBytes(BitmapUtils.genBitmapCode(image,false,false));
-//        usbPrinter.printLine(2);
-////        usbPrinter.printBytes(BitmapUtils.draw2PxPoint(image));
-////        usbPrinter.printLine(2);
-//        usbPrinter.printQrCode2("20225301314+CF15545655454+ssssss");
-//        usbPrinter.printLine(2);
-//        usbPrinter.printQrCode("20225301314+CF15545655454+ssssss");
-//        usbPrinter.printLine(2);
+//        ArrayList<byte[]> data = PrinterUtils.decodeBitmapToDataList(image, 255);
+//        for(byte[] bytes : data){
+//            usbPrinter.printBytes(bytes);
+//        }// 打印图片后 下一次格式有问题 todo
+        usbPrinter.printLine(3);
         // 切纸
         usbPrinter.cutPager();
+//        usbPrinter.init();
     }
 
     /**
